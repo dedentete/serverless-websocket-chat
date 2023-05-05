@@ -6,16 +6,15 @@ import onDisconnect from '@functions/onDisconnect';
 import sendMessage from '@functions/sendMessage';
 
 const serverlessConfiguration: AWS = {
-  service: 'websocket-api',
+  service: 'websocket-serverless-chat-api',
   frameworkVersion: '3',
   plugins: ['serverless-esbuild', 'serverless-offline'],
   provider: {
     name: 'aws',
     region: 'ap-northeast-1',
     runtime: 'nodejs18.x',
-    websocketsApiName: 'websocket-test',
+    websocketsApiName: 'websocket-serverless-chat-api',
     websocketsApiRouteSelectionExpression: '$request.body.action',
-    websocketsDescription: 'band assists api websocket',
 
     apiGateway: {
       minimumCompressionSize: 1024,

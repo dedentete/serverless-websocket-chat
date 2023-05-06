@@ -9,5 +9,5 @@
     - Dynamo DB に現在 onConnect なユーザーを記録する
 
 # TODO
-- DynamoDB 足す
+- DynamoDB をローカルでエミュレートできるようにする
 - Vite 化

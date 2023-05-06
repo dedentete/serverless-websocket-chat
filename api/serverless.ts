@@ -8,14 +8,13 @@ import sendMessage from '@functions/sendMessage';
 const serverlessConfiguration: AWS = {
   service: 'websocket-serverless-chat-api',
   frameworkVersion: '3',
-  plugins: ['serverless-esbuild', 'serverless-offline'],
+  plugins: ['serverless-esbuild', 'serverless-offline', 'serverless-dynamodb-local'],
   provider: {
     name: 'aws',
     region: 'ap-northeast-1',
     runtime: 'nodejs18.x',
     websocketsApiName: 'websocket-serverless-chat-api',
     websocketsApiRouteSelectionExpression: '$request.body.action',
-
     apiGateway: {
       minimumCompressionSize: 1024,
       shouldStartNameWithService: true,
@@ -23,7 +22,18 @@ const serverlessConfiguration: AWS = {
     environment: {
       AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1',
       NODE_OPTIONS: '--enable-source-maps --stack-trace-limit=1000',
+      CUSTOM_AWS_REGION: '${self:provider.region}',
+      CONNECTIONS_TABLE_NAME: '${self:resources.Resources.ConnectionsTable.Properties.TableName}',
     },
+    iamRoleStatements: [
+      {
+        Effect: 'Allow',
+        Action: [
+          'dynamodb:*',
+        ],
+        Resource: 'arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:resources.Resources.ConnectionsTable.Properties.TableName}',
+      },
+    ],
   },
   functions: { onConnect, onDisconnect, defaultFunction, sendMessage },
   package: { individually: true },
@@ -37,6 +47,32 @@ const serverlessConfiguration: AWS = {
       define: { 'require.resolve': undefined },
       platform: 'node',
       concurrency: 10,
+    },
+  },
+  resources: {
+    Resources: {
+      ConnectionsTable: {
+        Type: 'AWS::DynamoDB::Table',
+        Properties: {
+          TableName: 'websocketServerlessChatConnectionsTable',
+          AttributeDefinitions: [
+            {
+              AttributeName: 'connectionId',
+              AttributeType: 'S',
+            },
+          ],
+          KeySchema: [
+            {
+              AttributeName: 'connectionId',
+              KeyType: 'HASH',
+            },
+          ],
+          ProvisionedThroughput: {
+            ReadCapacityUnits: 1,
+            WriteCapacityUnits: 1,
+          },
+        },
+      },
     },
   },
 };

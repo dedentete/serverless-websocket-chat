@@ -1,10 +1,13 @@
 import { APIGatewayProxyWebsocketHandlerV2 } from 'aws-lambda';
 import { ApiGatewayManagementApi } from '@aws-sdk/client-apigatewaymanagementapi';
+import { DynamoDBClient, ScanCommand } from '@aws-sdk/client-dynamodb';
+import { unmarshall } from '@aws-sdk/util-dynamodb';
 import { encodeObjectToUint8Array } from 'src/common/dataEncoder';
 import { getEndpoint } from 'src/common/endpoint';
 
+const dynamoDBClient = new DynamoDBClient({ region: process.env.CUSTOM_AWS_REGION });
+
 /**
- * テストでメッセージを送信してただmessage success!!とbodyを返すだけの関数
  * @param event
  * @param _context
  * @param _callback
@@ -21,13 +24,21 @@ const sendMessage: APIGatewayProxyWebsocketHandlerV2 = async (
       endpoint: getEndpoint(event.requestContext),
     });
 
-    const data = encodeObjectToUint8Array({ message: 'message success!!', body: event.body });
+    const params = {
+      TableName: process.env.CONNECTIONS_TABLE_NAME,
+    };
+    const result = await dynamoDBClient.send(new ScanCommand(params));
+    const connections = result.Items.map(item => unmarshall(item));
+    const data = encodeObjectToUint8Array({ message: 'message success!', body: event.body });
 
-    // 送る処理
-    await apiManage.postToConnection({
-      ConnectionId: event.requestContext.connectionId,
-      Data: data,
-    });
+    await Promise.all(
+      connections.map(async (connection) => {
+        await apiManage.postToConnection({
+          ConnectionId: connection.connectionId,
+          Data: data,
+        });
+      })
+    );
 
     return {
       statusCode: 200,

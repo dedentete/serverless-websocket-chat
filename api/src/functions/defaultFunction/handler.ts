@@ -4,7 +4,6 @@ import { encodeObjectToUint8Array } from 'src/common/dataEncoder';
 import { getEndpoint } from 'src/common/endpoint';
 
 /**
- * 定義されていないルートでリクエストされたときの処理
  * @param event
  * @param _context
  * @param _callback

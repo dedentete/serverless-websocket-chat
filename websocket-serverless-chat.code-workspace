@@ -1,6 +1,15 @@
 {
 	"folders": [
 		{
+			"name": "api",
+			"path": "api"
+		},
+		{
+			"name": "lp",
+			"path": "lp"
+		},
+		{
+			"name": "root",
 			"path": "."
 		}
 	]

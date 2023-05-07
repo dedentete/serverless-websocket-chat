@@ -3,17 +3,17 @@ import type { AWS } from '@serverless/typescript';
 import defaultFunction from '@functions/defaultFunction';
 import onConnect from '@functions/onConnect';
 import onDisconnect from '@functions/onDisconnect';
-import sendMessage from '@functions/sendMessage';
+import sendMessages from '@functions/sendMessages';
 
 const serverlessConfiguration: AWS = {
-  service: 'websocket-serverless-chat-api',
+  service: 'serverless-websocket-chat-api',
   frameworkVersion: '3',
   plugins: ['serverless-esbuild', 'serverless-offline', 'serverless-dynamodb-local'],
   provider: {
     name: 'aws',
     region: 'ap-northeast-1',
     runtime: 'nodejs18.x',
-    websocketsApiName: 'websocket-serverless-chat-api',
+    websocketsApiName: 'serverless-websocket-chat-api',
     websocketsApiRouteSelectionExpression: '$request.body.action',
     apiGateway: {
       minimumCompressionSize: 1024,
@@ -35,7 +35,7 @@ const serverlessConfiguration: AWS = {
       },
     ],
   },
-  functions: { onConnect, onDisconnect, defaultFunction, sendMessage },
+  functions: { onConnect, onDisconnect, defaultFunction, sendMessages },
   package: { individually: true },
   custom: {
     esbuild: {
@@ -54,7 +54,7 @@ const serverlessConfiguration: AWS = {
       ConnectionsTable: {
         Type: 'AWS::DynamoDB::Table',
         Properties: {
-          TableName: 'websocketServerlessChatConnectionsTable',
+          TableName: 'serverlessWebsocketChatConnectionsTable',
           AttributeDefinitions: [
             {
               AttributeName: 'connectionId',

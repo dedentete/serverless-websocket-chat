@@ -27,6 +27,7 @@ const onDisconnect: APIGatewayProxyWebsocketHandlerV2 = async (
     await dynamoDBClient.send(new DeleteItemCommand(params));
 
     console.log('disconnected!');
+    
     return {
       statusCode: 200,
       body: 'disconnected',

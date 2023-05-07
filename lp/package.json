@@ -1,5 +1,5 @@
 {
-  "name": "websocket-serverless-chat",
+  "name": "serverless-websocket-chat",
   "version": "0.1.0",
   "private": true,
   "scripts": {

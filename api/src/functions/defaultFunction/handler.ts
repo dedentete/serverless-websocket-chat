@@ -1,6 +1,6 @@
 import { APIGatewayProxyWebsocketHandlerV2 } from 'aws-lambda';
 import { ApiGatewayManagementApi } from '@aws-sdk/client-apigatewaymanagementapi';
-import { encodeObjectToUint8Array } from 'src/common/dataEncoder';
+import { TextEncoder } from 'util';
 import { getEndpoint } from 'src/common/endpoint';
 
 /**
@@ -20,9 +20,8 @@ const defaultFunction: APIGatewayProxyWebsocketHandlerV2 = async (
       endpoint: getEndpoint(event.requestContext),
     });
 
-    const data = encodeObjectToUint8Array({ message: 'not defined action...' });
+    const data = new TextEncoder().encode('not defined action...');
 
-    // 送る処理
     await apiManage.postToConnection({
       ConnectionId: event.requestContext.connectionId,
       Data: data,

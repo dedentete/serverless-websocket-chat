@@ -7,10 +7,10 @@
     </div>
     <div class="input-area">
       <input class="input-message" type="text" v-model="inputMessage" @keyup.enter="sendMessage(inputMessage)"
-        placeholder="Type your message here">
-      <button class="send-button" @click="sendMessage(inputMessage)">Send</button>
-      <button class="connect-button" @click="connect">Connect</button>
-      <button class="disconnect-button" @click="disconnect">Disconnect</button>
+        placeholder="ここにメッセージを入れる">
+      <button class="send-button" @click="sendMessage(inputMessage)">送信</button>
+      <button class="connect-button" @click="connect">接続</button>
+      <button class="disconnect-button" @click="disconnect">切断</button>
     </div>
   </div>
 </template>
@@ -46,7 +46,7 @@ export default defineComponent({
     function connect() {
       if (!connection.value || connection.value.readyState === WebSocket.CLOSED) {
         console.log("Starting connection to WebSocket Server");
-        connection.value = new WebSocket("wss://ie3l31fg0g.execute-api.ap-northeast-1.amazonaws.com/production");
+        connection.value = new WebSocket("wss://80j5cnrtd1.execute-api.ap-northeast-1.amazonaws.com/dev");
 
         connection.value.onmessage = (event: MessageEvent) => {
           console.log(event);
@@ -56,12 +56,12 @@ export default defineComponent({
         connection.value.onopen = (event: Event) => {
           console.log(event);
           console.log("Successfully connected to the echo websocket server...");
-          messages.push({ id: Date.now(), text: "Connected to the WebSocket server.", type: 'status' });
+          messages.push({ id: Date.now(), text: "WebSocketサーバーと接続した！", type: 'status' });
         };
 
         connection.value.onclose = (event: CloseEvent) => {
           console.log("WebSocket connection closed:", event);
-          messages.push({ id: Date.now(), text: "Disconnected from the WebSocket server.", type: 'status' });
+          messages.push({ id: Date.now(), text: "WebSocketサーバーから切断した！", type: 'status' });
         };
       }
     }
